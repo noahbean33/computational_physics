@@ -37,6 +37,31 @@ def setup_plot(title: str = None, xlabel: str = None, ylabel: str = None,
     
     return fig, ax
 
+
+def maybe_save_or_show(path: Optional[str], show: bool = True, tight: bool = True, dpi: int = 150, close: bool = True) -> None:
+    """Save current matplotlib figure to path or show it.
+
+    Args:
+        path: If provided, save figure to this path (directories created as needed).
+        show: If True and path is None, show the figure interactively.
+        tight: If True, apply tight_layout before save/show.
+        dpi: DPI used when saving.
+        close: If True and saving, close the figure to free memory.
+    """
+    if tight:
+        try:
+            plt.tight_layout()
+        except Exception:
+            pass
+    if path:
+        import os
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        plt.savefig(path, dpi=dpi)
+        if close:
+            plt.close()
+    elif show:
+        plt.show()
+
 def plot_phase_space(trajectories: List[np.ndarray], labels: List[str] = None, 
                     xlabel: str = 'Position', ylabel: str = 'Momentum',
                     title: str = 'Phase Space Trajectory') -> Tuple[plt.Figure, plt.Axes]:
