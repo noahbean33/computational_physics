@@ -1,0 +1,74 @@
+Converting your C code to C++ is quite straightforward, especially since Raylib is already compatible with C++. You can think of it as a "spectrum" of difficulty depending on how much "C++ flavor" you want to add.
+
+Here is a breakdown of the transition from a simple port to a more idiomatic C++ approach:
+
+---
+
+## Level 1: The "Minimalist" Port (Very Easy)
+
+Since C++ is largely a superset of C, you could technically just rename your file to `charges.cpp` and it would likely compile with very few changes.
+
+* **Difficulty:** 1/10
+* **Key Change:** Replace `rand()` and `GetRandomValue` with the `<random>` header for better distribution (optional but recommended).
+* **Memory:** You are already using a fixed-size array (`Charge charges[NUM_CHARGES]`), which works fine in C++.
+
+## Level 2: The "Object-Oriented" Approach (Moderate)
+
+This is where you start using C++ for what it’s built for: **Encapsulation**. Instead of a struct and a bunch of global functions that take pointers, you create a `Charge` class.
+
+### How it would look:
+
+```cpp
+class Charge {
+public:
+    Vector2 position;
+    Vector2 velocity;
+    float chargeValue;
+
+    Charge() {
+        // Constructor logic to initialize random values
+    }
+
+    void Update(float dt) {
+        // Movement logic moved inside the class
+    }
+
+    void Draw() const {
+        Color color = (chargeValue > 0) ? RED : BLUE;
+        DrawCircleV(position, RADIUS, color);
+    }
+};
+
+```
+
+* **Difficulty:** 3/10
+* **Benefit:** Your `main` loop becomes much cleaner. Instead of managing raw floats, you use Raylib’s `Vector2` type, which allows for cleaner math (especially if you overload operators).
+
+## Level 3: Modern C++ Features (The "Sophisticated" Way)
+
+To make the code truly "C++," you would move away from fixed C-style arrays and manual loops.
+
+* **`std::vector<Charge>`**: Instead of `#define NUM_CHARGES 200`, use a dynamic vector. This allows you to add or remove charges while the simulation is running.
+* **Range-based for loops**: Replace `for (int i=0; i < NUM_CHARGES; i++)` with `for (auto& c : charges)`. It’s safer and more readable.
+* **`<algorithm>`**: You can use `std::for_each` or even `std::execution::par` to easily **parallelize** your force calculations across multiple CPU cores.
+
+---
+
+## Summary of Changes
+
+| Feature | C Approach (Current) | C++ Approach (Modern) |
+| --- | --- | --- |
+| **Data Storage** | `Charge charges[200]` | `std::vector<Charge> charges` |
+| **Math** | Manual `x`, `y` floats | `Vector2` (Raylib struct) |
+| **Randomness** | `rand() % 11` | `std::mt19937` (Mersenne Twister) |
+| **Organization** | Functions like `DrawCharges()` | Class methods like `Charge::Draw()` |
+
+## The "Gotcha":  Complexity
+
+The biggest hurdle isn't the language—it's the logic. Even in C++, the nested loop for `ComputeForces` remains the bottleneck. If you use C++, you can leverage **Operator Overloading** to make that math look much prettier:
+
+Instead of:
+`float dx = c2->x - c1->x;`
+
+You could write:
+`Vector2 direction = c2.pos - c1.pos;`

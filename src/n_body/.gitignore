@@ -1,0 +1,64 @@
+# =====================================
+# Git ignore for Rust + Python project
+# =====================================
+
+# --- Rust ---
+/target/
+**/*.rs.bk
+# Keep Cargo.lock for binaries and reproducible builds
+# !Cargo.lock
+
+# Cargo / build metadata that can appear at root (normally inside target)
+.rustc_info.json
+
+# --- Python (project under python/) ---
+python/__pycache__/
+python/**/*.pyc
+python/**/*.pyo
+python/**/*.pyd
+python/*.egg-info/
+python/.eggs/
+python/build/
+python/dist/
+python/.mypy_cache/
+python/.pytest_cache/
+python/.tox/
+python/.ruff_cache/
+python/.ipynb_checkpoints/
+python/.coverage
+python/.coverage.*
+python/coverage.xml
+python/htmlcov/
+
+# Virtual environments
+python/.venv/
+python/venv/
+python/ENV/
+python/env/
+python/.env/
+
+# --- Generated outputs ---
+# Simulation CSV output
+simulation_output.csv
+python/simulation_output.csv
+
+# Logs and caches
+logs/
+*.log
+.cache/
+
+tmp/
+
+# --- Editors / IDE ---
+.vscode/
+.idea/
+*.code-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Environment / secrets ---
+.env
+.env.*
